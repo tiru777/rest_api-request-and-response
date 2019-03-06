@@ -31,9 +31,17 @@ router.register(r'snippets', views.SnippetViewSet)
 router.register(r'users', views.UserViewSet)
 
 # The API URLs are now determined automatically by the router.
+
+#adding coreapi
+
+from rest_framework.schemas import get_schema_view
+
+schema_view = get_schema_view(title='Pastebin API')
+
+
 urlpatterns = [
     path('', include(router.urls)),
     #path('snippets/', views.SnippetViewSet),
     #path('snippets/detail/<int:pk>/', views.UserViewSet)
+    path('schema/', schema_view)
 ]
-
