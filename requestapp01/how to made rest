@@ -1,0 +1,209 @@
+-first we need to install djangorestframework
+
+settings:
+------------
+-then we need to configure in settings
+-we need to configure paginations for each client
+
+urls:
+-------------------
+-if we want add application url here by using include
+    path('',include('requestapp01.urls'))
+-if we want authenticate we need to add
+    path('api-auth/', include('rest_framework.urls'))
+
+
+
+we need to create application
+--------------------------------
+-we need to configure in settings.py
+
+models.py
+----------
+=>we need to install before pygements for code highlighting
+=>based on requriments you need to create models fields
+=>if you user need to add auth.user for authentication
+
+admin.py
+--------
+-register model if you want add fields in admin
+
+serializers
+------------------------------------------------------------------------------
+=>you need to import serializers from rest_framework
+=>import models and create class based serialzers
+
+class SnippetSerializer(serializers.ModelSerializer):#we should use model serializer or hyperlinkedserilaizer or
+    class Meta:
+        model = Snippet
+        owner = serializers.ReadOnlyField(source='owner.username')
+        fields = ('id', 'title', 'code', 'linenos', 'language', 'style','owner')
+
+=>add fields all or indvidual things and create user of owner
+
+=>create class based view for user and  django.contib.auth.models import user
+
+from django.contrib.auth.models import User#we need to import User or Group
+
+class UserSerializer(serializers.ModelSerializer):
+    snippets = serializers.PrimaryKeyRelatedField(many=True, queryset=Snippet.objects.all())#we should import all fields of model
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'snippets')
+
+views.py
+---------------------------------------------------------------------------------------
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from requestapp01.models import Snippet                 #importing models
+from rest_framework import permissions                  #for authentication purpose permissions
+from rest_framework import renderers                    #for displaying
+from requestapp01.permissions import IsOwnerOrReadOnly  #we want to create custom permission for objects from
+                                                            that class name IsOwnerOrReadOnly
+
+from rest_framework import viewsets
+from requestapp01.serializers import  UserSerializer,SnippetSerializer
+from django.contrib.auth.models import User
+
+class SnippetViewSet(viewsets.ModelViewSet):    #here we are using viewsets need to import from rest_frameowrk
+                                                #SnippetList, SnippetDetail and SnippetHighlight view classes by replacing
+                                                single class by using viewset
+    """
+    This viewset automatically provides `list`, `create`, `retrieve`,
+    `update` and `destroy` actions.
+
+    Additionally we also provide an extra `highlight` action.
+    """
+    queryset = Snippet.objects.all()
+    serializer_class = SnippetSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,#this is default
+                          IsOwnerOrReadOnly,)#this is created permisiion class
+
+    @action(detail=True, renderer_classes=[renderers.StaticHTMLRenderer])
+
+                                                    #action decorator to create a custom action, named highlight.
+                                                    This decorator can be used to add any custom endpoints that
+                                                     don't fit into the standard create/update/delete style.
+
+    def highlight(self, request, *args, **kwargs):  #for responding snippet created object
+        snippet = self.get_object()
+        return Response(snippet.highlighted)
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)    #save in created user
+
+
+class UserViewSet(viewsets.ReadOnlyModelViewSet):     #for creating or showing users for authenticated users
+    """
+    This viewset automatically provides `list` and `detail` class insted of writing two classes
+    """
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

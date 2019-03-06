@@ -13,17 +13,17 @@ STYLE_CHOICES = sorted((item, item) for item in get_all_styles())
 
 class Snippet(models.Model):
     created = models.DateTimeField(auto_now_add=True)
-    title = models.CharField(max_length=100, blank=True, default='')
+    title = models.CharField(max_length=100, blank=True, default='')#default spacxe could be created blank=true the field not required
     code = models.TextField()
-    linenos = models.BooleanField(default=False)
-    language = models.CharField(choices=LANGUAGE_CHOICES, default='python', max_length=100)
+    linenos = models.BooleanField(default=False)#checkbox will be created with not clicked
+    language = models.CharField(choices=LANGUAGE_CHOICES, default='python', max_length=100)#diffrent langauges opened but it could default python
     style = models.CharField(choices=STYLE_CHOICES, default='friendly', max_length=100)
 
-    owner = models.ForeignKey('auth.User', related_name='snippets', on_delete=models.CASCADE)
+    owner = models.ForeignKey('auth.User', related_name='snippets', on_delete=models.CASCADE)#for creating user for authentication
     highlighted = models.TextField()
 
     class Meta:
-        ordering = ('created',)
+        ordering = ('created',)#it will show when date added
 
 def save(self, *args, **kwargs):
     """
@@ -35,7 +35,7 @@ def save(self, *args, **kwargs):
     options = {'title': self.title} if self.title else {}
     formatter = HtmlFormatter(style=self.style, linenos=linenos,
                               full=True, **options)
-    self.highlighted = highlight(self.code, lexer, formatter)
+    self.highlighted = highlight(self.code, lexer, formatter)#for highlightining the code,format,lexer
     super(Snippet, self).save(*args, **kwargs)
 
 

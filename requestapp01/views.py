@@ -1,9 +1,3 @@
-
-
-
-
-
-
 from rest_framework import viewsets
 from requestapp01.serializers import  UserSerializer,SnippetSerializer
 from django.contrib.auth.models import User
