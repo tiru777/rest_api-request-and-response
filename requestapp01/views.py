@@ -4,19 +4,76 @@
 from requestapp01.models import Snippet
 from requestapp01.serializers import SnippetSerializer
 from rest_framework import generics
+from rest_framework import permissions
 
 
 class SnippetList(generics.ListCreateAPIView):
     queryset = Snippet.objects.all()
     serializer_class = SnippetSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
 
 
 class SnippetDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Snippet.objects.all()
     serializer_class = SnippetSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+
+#--------------------------------------user
+from django.contrib.auth.models import User
+from requestapp01.serializers import UserSerializer
+
+class UserList(generics.ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+
+class UserDetail(generics.RetrieveAPIView):
+    queryset = User.objects.all()
 
 
 
+
+
+
+
+
+
+
+
+'''
+
+django.core import validators
+class FeedBackForm(forms.Form):
+    name=forms.CharField()
+    rollno=forms.IntegerField()
+    email=forms.EmailField()
+    feedback=forms.CharField(widget=forms.Textarea)
+
+def clean_name(self):
+    print('validating name')
+    inputname=self.cleaned_data['name']
+    if len(inputname) < 4:
+        raise forms.ValidationError('The Minimum no of characters in the name field should be 4')
+    return inputname
+def clean_rollno(self):
+    inputrollno=self.cleaned_data['rollno']
+    print('Validating rollno field')
+    return inputrollno
+def clean_email(self):
+    inputemail=self.cleaned_data['email']
+    print('Validating email field')
+    return inputemail
+
+def clean_feedback(self):
+    inputfeedback=self.cleaned_data['feedback']
+    print('Validating feedback field')
+    return inputfeedback
+
+'''
 
 
 
