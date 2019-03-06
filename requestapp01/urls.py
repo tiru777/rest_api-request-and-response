@@ -21,16 +21,6 @@ urlpatterns = format_suffix_patterns(urlpatterns)
 '''
 
 
-
-
-
-
-
-
-
-
-
-
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from requestapp01 import views
@@ -43,6 +33,7 @@ router.register(r'users', views.UserViewSet)
 # The API URLs are now determined automatically by the router.
 urlpatterns = [
     path('', include(router.urls)),
-    path('snippets/', views.SnippetViewSet),
-    path('snippets/detail/<int:pk>/', views.UserViewSet)
+    #path('snippets/', views.SnippetViewSet),
+    #path('snippets/detail/<int:pk>/', views.UserViewSet)
 ]
+
