@@ -100,9 +100,57 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):     #for creating or showing u
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
+Permissio.py
+---------------------------------------------------------------
+=>we should create permission for which one to show and which one we shouldn't show to user custmized way
+
+from rest_framework import permissions
+
+
+class IsOwnerOrReadOnly(permissions.BasePermission):#here we are using Base permisiion
+    """
+    Custom permission to only allow owners of an object to edit it.
+    """
+
+    def has_object_permission(self, request, view, obj):
+        # Read permissions are allowed to any request,
+        # so we'll always allow GET, HEAD or OPTIONS requests.
+
+        if request.method in permissions.SAFE_METHODS:
+            return True
+
+        return obj.owner == request.user    #Write permissions are only allowed to the owner of the snippet.
+
+
+app urls.py
+--------------------------------------------------------------------------------------
+
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter    #here we are using routers default adding urls for individual views of classes
+from requestapp01 import views
+from rest_framework.schemas import get_schema_view      #for adding coreapi we need install
+                                                            pip install coreapi pyyaml
+
+# Create a router and register our viewsets with it.
+
+router = DefaultRouter()                            #The DefaultRouter class we're using also automatically creates
+                                                    the API root view for us, so we can now delete the api_root method
+                                                    from our views module
+router.register(r'snippets', views.SnippetViewSet)
+router.register(r'users', views.UserViewSet)
+
+# The API URLs are now determined automatically by the router.
+
+#adding coreapi
 
 
 
+schema_view = get_schema_view(title='Pastebin API')
+
+urlpatterns = [
+    path('', include(router.urls)),     #here we are adding routers urls
+    path('schema/', schema_view)        #for schema view we are adding schema
+]
 
 
 
